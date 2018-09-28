@@ -3,24 +3,6 @@
 	"ignore": "test",
 	"package": [
 		{
-			"checksumSHA1": "Qq7Gzany1n6gK6hpZQq9UXFhGGo=",
-			"comment": "v1.0rc1-110-g4cc2de6",
-			"path": "github.com/gin-gonic/gin",
-			"revision": "4cc2de6207f4128624cbdd16be30f64966c67c08"
-		},
-		{
-			"checksumSHA1": "M8Z61f8GZs6CO23wP+ekRgZEo+w=",
-			"comment": "v1.0rc1-110-g4cc2de6",
-			"path": "github.com/gin-gonic/gin/binding",
-			"revision": "4cc2de6207f4128624cbdd16be30f64966c67c08"
-		},
-		{
-			"checksumSHA1": "/cPJSLLdEAWI/Mavbbe13RgSfP4=",
-			"comment": "v1.0rc1-110-g4cc2de6",
-			"path": "github.com/gin-gonic/gin/render",
-			"revision": "4cc2de6207f4128624cbdd16be30f64966c67c08"
-		},
-		{
 			"checksumSHA1": "MFkrEy77SoBbEtLd3Ros+NZO35w=",
 			"path": "github.com/heroku/x/hmetrics",
 			"revision": "705849e307dd75c91728463dea5bfd08ef493e64",
@@ -59,5 +41,4 @@
 			"revision": "d627af88ac021317a280d320986282a6dc97549a"
 		}
 	],
-	"rootPath": "github.com/heroku/go-getting-started"
 }
