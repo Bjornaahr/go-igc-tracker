@@ -1,1 +1,1 @@
-web: go-igc-tracker
+web: main
