@@ -7,7 +7,7 @@ import (
 	"github.com/marni/goigc"
 )
 
-func pilotHandler(w http.ResponseWriter, r *http.Request) {
+func handlerPilot(w http.ResponseWriter, r *http.Request) {
 	s := "http://skypolaris.org/wp-content/uploads/IGS%20Files/Madrid%20to%20Jerez.igc"
 	track, err := igc.ParseLocation(s)
 	if err != nil {
@@ -21,5 +21,6 @@ func pilotHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-
+	http.HandleFunc("/", handlerPilot)
+	http.ListenAndServe("0.0.0.0:8080", nil)
 }
