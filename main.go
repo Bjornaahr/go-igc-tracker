@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/marni/goigc"
 )
@@ -16,11 +17,26 @@ func handlerPilot(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintf(w, "Pilot: %s, gliderType: %s, date: %s",
-		track.Pilot, track.GliderType, track.Date.String())
+	fmt.Fprintln(w, track.Pilot)
+}
+
+func handlerF(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "F to pay respect")
+}
+
+//GetPort retrives the port
+func GetPort() string {
+	var port = os.Getenv("PORT")
+	// Set a default port if there is nothing in the environment
+	if port == "" {
+		port = "4747"
+		fmt.Println("INFO: No PORT environment variable detected, defaulting to " + port)
+	}
+	return ":" + port
 }
 
 func main() {
-	http.HandleFunc("/", handlerPilot)
-	http.ListenAndServe("0.0.0.0:8080", nil)
+	http.HandleFunc("/p/", handlerPilot)
+	http.HandleFunc("/", handlerF)
+	http.ListenAndServe(GetPort(), nil)
 }
