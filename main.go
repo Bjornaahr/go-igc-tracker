@@ -20,8 +20,14 @@ func handlerPilot(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, track.Pilot)
 }
 
-func handlerF(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "F to pay respect")
+func handlerIGCINFO(w http.ResponseWriter, r *http.Request) {
+	status := 404
+	http.Error(w, http.StatusText(status), status)
+}
+
+func handlerRubbish(w http.ResponseWriter, r *http.Request) {
+	status := 404
+	http.Error(w, http.StatusText(status), status)
 }
 
 //GetPort retrives the port
@@ -36,7 +42,7 @@ func GetPort() string {
 }
 
 func main() {
-	http.HandleFunc("/p/", handlerPilot)
-	http.HandleFunc("/", handlerF)
+	http.HandleFunc("/igcinfo/", handlerIGCINFO)
+	http.HandleFunc("/rubbish/", handlerRubbish)
 	http.ListenAndServe(GetPort(), nil)
 }
