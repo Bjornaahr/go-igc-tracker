@@ -33,6 +33,12 @@
 			"revisionTime": "2018-08-26T21:09:00Z"
 		},
 		{
+			"checksumSHA1": "FtCtcD/Ys18frKJyeZLzkPY6J8g=",
+			"path": "github.com/gorilla/mux",
+			"revision": "deb579d6e030503f430978ee229008b9bc912d40",
+			"revisionTime": "2018-10-12T15:31:51Z"
+		},
+		{
 			"checksumSHA1": "UfnHk2WRNiN85q2ZuPTt5IjzswI=",
 			"path": "github.com/joeshaw/iso8601",
 			"revision": "861d1ce636d058f8544e10ee3d2371e061484775",
