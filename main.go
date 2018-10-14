@@ -14,8 +14,10 @@ import (
 )
 
 const (
+	//VERSION of program
 	VERSION = "1.0"
-	DESC    = "Service for IGC tracks."
+	//DESC is a description of the program
+	DESC = "Service for IGC tracks."
 )
 
 //MetaInfo about the program
@@ -25,10 +27,10 @@ type MetaInfo struct {
 	Version string `json:"version"`
 }
 
-//Glider track info
+//Track is glider track info
 type Track struct {
-	ID          int       `json: "ID"`
-	Hdate       time.Time `json:"date from File Header, H-record"`
+	ID          int       `json:"ID"`
+	Hdate       time.Time `json:"H_Date"`
 	Pilot       string    `json:"pilot"`
 	Glider      string    `json:"glider"`
 	GliderID    string    `json:"glider_id"`
@@ -37,6 +39,8 @@ type Track struct {
 
 var startTime time.Time
 var tracks map[int]Track
+
+//ID counter
 var ID int
 
 func init() {
@@ -45,7 +49,7 @@ func init() {
 	ID = 1
 }
 
-//Calculates uptime
+//Uptime calculates uptime of program
 func Uptime() string {
 	now := time.Now()
 	now.Format(time.RFC3339)
@@ -113,6 +117,7 @@ func handlerGetField(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
+
 	//Map to search for fields
 	trackMap := map[string]string{
 		"pilot":        tracks[id].Pilot,
@@ -125,13 +130,8 @@ func handlerGetField(w http.ResponseWriter, r *http.Request) {
 	field := strings.ToLower(vars["field"])
 	//Finds the given field, error 400 if field is invalid
 	if val, ok := trackMap[field]; ok {
-		TrackJSON, err := json.Marshal(val)
-		if err != nil {
-			panic(err)
-		}
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		w.Write(TrackJSON)
+		//Writes field as plain/text
+		fmt.Fprintf(w, val)
 	} else {
 		http.Error(w, "400 - Bad Request, field invalid", http.StatusBadRequest)
 		return
