@@ -11,7 +11,6 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/marni/goigc"
-	"github.com/p3lim/iso8601"
 )
 
 const (
@@ -46,50 +45,54 @@ func init() {
 	ID = 1
 }
 
-func handlerPilot(w http.ResponseWriter, r *http.Request) {
-	s := "http://skypolaris.org/wp-content/uploads/IGS%20Files/Madrid%20to%20Jerez.igc"
-	track, err := igc.ParseLocation(s)
-	if err != nil {
-		status := 400
-		http.Error(w, http.StatusText(status), status)
-		return
-	}
+//Calculates uptime
+func Uptime() string {
+	now := time.Now()
+	now.Format(time.RFC3339)
+	startTime.Format(time.RFC3339)
 
-	fmt.Fprintln(w, track.Pilot)
+	return now.Sub(startTime).String()
 }
 
+//Displays metadata
 func handlerAPI(w http.ResponseWriter, r *http.Request) {
-
-	info := MetaInfo{iso8601.Format(time.Since(startTime)),
+	//Gets uptime without decimal points
+	time := strings.Split(Uptime(), ".")
+	info := MetaInfo{time[0],
 		DESC,
 		VERSION}
 	infoJSON, err := json.Marshal(info)
 	if err != nil {
 		panic(err)
 	}
+	//Set headertype, status and write the metadata
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(infoJSON)
 
 }
 
+//Displays track
 func handlerGetTrack(w http.ResponseWriter, r *http.Request) {
-
+	//Check if it's a GET request, gives error 405
 	if r.Method != "GET" {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-
+	//Gets and parses the ID from URL
 	vars := mux.Vars(r)
 	varID := vars["id"]
+	//Converts ID to string
 	id, err := strconv.Atoi(varID)
 	if err != nil {
 		panic(err)
 	}
+
 	TrackJSON, err := json.Marshal(tracks[id])
 	if err != nil {
 		panic(err)
 	}
+	//Check if track ID exists
 	if tracks[id].ID == 0 {
 		http.Error(w, "404 Not found", http.StatusNotFound)
 		return
@@ -99,14 +102,18 @@ func handlerGetTrack(w http.ResponseWriter, r *http.Request) {
 	w.Write(TrackJSON)
 }
 
+//Display a field from a track
 func handlerGetField(w http.ResponseWriter, r *http.Request) {
+
+	//Gets and parses the ID from URL
 	vars := mux.Vars(r)
 	varID := vars["id"]
+	//Converts ID to string
 	id, err := strconv.Atoi(varID)
 	if err != nil {
 		panic(err)
 	}
-
+	//Map to search for fields
 	trackMap := map[string]string{
 		"pilot":        tracks[id].Pilot,
 		"glider":       tracks[id].Glider,
@@ -114,8 +121,9 @@ func handlerGetField(w http.ResponseWriter, r *http.Request) {
 		"track_length": fmt.Sprintf("%f", tracks[id].Tracklength),
 		"h_date":       tracks[id].Hdate.String(),
 	}
+	//Makes the fields to lowercase
 	field := strings.ToLower(vars["field"])
-
+	//Finds the given field, error 400 if field is invalid
 	if val, ok := trackMap[field]; ok {
 		TrackJSON, err := json.Marshal(val)
 		if err != nil {
@@ -125,20 +133,23 @@ func handlerGetField(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Write(TrackJSON)
 	} else {
-		http.Error(w, "400 - Bad Request, the field you entered is not on our database!", http.StatusBadRequest)
+		http.Error(w, "400 - Bad Request, field invalid", http.StatusBadRequest)
 		return
 
 	}
 
 }
 
+//Displays Ids or adds Track to memory
 func handlerIGC(w http.ResponseWriter, r *http.Request) {
+
+	//Check if request is GET or POST
 	switch r.Method {
-
+	//Displays Ids
 	case ("GET"):
-
+		//Slice of Ids
 		ids := []int{}
-
+		//Add id of track to slice
 		for index := range tracks {
 			ids = append(ids, tracks[index].ID)
 		}
@@ -153,13 +164,16 @@ func handlerIGC(w http.ResponseWriter, r *http.Request) {
 
 	//Creates a track
 	case ("POST"):
+		//URL string
 		var url string
 		err := json.NewDecoder(r.Body).Decode(&url)
 		if err != nil {
 			http.Error(w, err.Error(), 400)
 			return
 		}
+		//Parses IGC file from URL
 		track, err := igc.ParseLocation(url)
+		//Fills in values in track
 		tracks[ID] = Track{ID, track.Date, track.Pilot, track.GliderType, track.GliderID, CalculateDistance(track)}
 
 		infoJSON, err := json.Marshal(tracks[ID].ID)
@@ -170,9 +184,11 @@ func handlerIGC(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		w.Write(infoJSON)
+		//Adds one to ID so every track that is created is uniqe
 		ID++
 
 	default:
+		//If request is not GET or POST error 405
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
 }
