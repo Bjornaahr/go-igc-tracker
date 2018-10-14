@@ -9,7 +9,8 @@
 
 ## Faults
 - Can ```POST``` the same track several times
-- ```GET /api/igc``` can appear ascending order
+- ```GET /api/igc``` can appear in non ascending order
 - ```GET /api ``` Uptime might not be 100% correct
+- No tests
 
 ###### This was the first assignment for Cloud technologies NTNU Gjøvik 2018
